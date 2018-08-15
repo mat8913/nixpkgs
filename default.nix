@@ -25,4 +25,6 @@ if ! builtins ? nixVersion || builtins.compareVersions requiredVersion builtins.
 
 else
 
-  import ./pkgs/top-level/impure.nix
+{ ... } @ args:
+
+  import ./pkgs/top-level/impure.nix ({config = import ./my/config.nix;} // args)

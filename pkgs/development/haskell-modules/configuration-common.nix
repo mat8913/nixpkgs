@@ -188,6 +188,12 @@ self: super: {
   # https://github.com/mvoidex/hsdev/issues/11
   hsdev = dontHaddock super.hsdev;
 
+  passman-core = doJailbreak (dontHaddock super.passman-core);
+
+  passman-cli = doJailbreak super.passman-cli;
+
+  myanimelist-export = doJailbreak super.myanimelist-export;
+
   # Upstream notified by e-mail.
   permutation = dontCheck super.permutation;
 

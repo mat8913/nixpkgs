@@ -177,6 +177,13 @@ self: super: {
   # https://github.com/mvoidex/hsdev/issues/11
   hsdev = dontHaddock super.hsdev;
 
+  passman-core = dontHaddock (super.passman-core.overrideScope (self: super: {
+    QuickCheck = self.QuickCheck_2_9_2;
+    quickcheck-instances = self.quickcheck-instances_0_3_14;
+    aeson = self.aeson_1_2_2_0;
+    generic-deriving = self.generic-deriving_1_11_2;
+  }));
+
   # Upstream notified by e-mail.
   permutation = dontCheck super.permutation;
 

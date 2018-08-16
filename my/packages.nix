@@ -44,6 +44,7 @@ with pkgs;
   xbindkeys
   xfce.terminal
   xscreensaver
+  xss-lock
   youtube-dl
 
   haskellPackages.myanimelist-export

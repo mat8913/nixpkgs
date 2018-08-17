@@ -17265,7 +17265,9 @@ EOF
 
   xlwt = callPackage ../development/python-modules/xlwt { };
 
-  youtube-dl = callPackage ../tools/misc/youtube-dl {};
+  youtube-dl = callPackage ../tools/misc/youtube-dl {
+    ffmpeg = pkgs.ffmpeg_3_2;
+  };
 
   youtube-dl-light = callPackage ../tools/misc/youtube-dl {
     ffmpegSupport = false;

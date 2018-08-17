@@ -19421,6 +19421,10 @@ with pkgs;
 
   ### DESKTOP ENVIRONMENTS
 
+  cinnamon = recurseIntoAttrs rec {
+    cinnamon-desktop = callPackage ../desktops/cinnamon/cinnamon-desktop.nix { };
+  };
+
   clearlooks-phenix = callPackage ../misc/themes/clearlooks-phenix { };
 
   deepin = recurseIntoAttrs (callPackage ../desktops/deepin { });

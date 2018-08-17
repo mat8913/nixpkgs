@@ -2179,6 +2179,11 @@
     github = "martingms";
     name = "Martin Gammelsæter";
   };
+  mat8913 = {
+    email = "mbekkema97@gmail.com";
+    github = "mat8913";
+    name = "Matthew Harm Bekkema";
+  };
   matejc = {
     email = "cotman.matej@gmail.com";
     github = "matejc";

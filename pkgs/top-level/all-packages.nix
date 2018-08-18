@@ -19422,7 +19422,9 @@ with pkgs;
   ### DESKTOP ENVIRONMENTS
 
   cinnamon = recurseIntoAttrs rec {
+    callPackage = newScope pkgs.cinnamon;
     cinnamon-desktop = callPackage ../desktops/cinnamon/cinnamon-desktop.nix { };
+    nemo = callPackage ../desktops/cinnamon/nemo.nix { };
   };
 
   clearlooks-phenix = callPackage ../misc/themes/clearlooks-phenix { };

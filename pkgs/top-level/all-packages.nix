@@ -19424,6 +19424,9 @@ with pkgs;
   cinnamon = recurseIntoAttrs rec {
     callPackage = newScope pkgs.cinnamon;
     cinnamon-desktop = callPackage ../desktops/cinnamon/cinnamon-desktop.nix { };
+    xapp = callPackage ../desktops/cinnamon/xapp.nix {
+      inherit (gnome3) libgnomekbd;
+    };
     nemo = callPackage ../desktops/cinnamon/nemo.nix { };
   };
 

@@ -9243,6 +9243,8 @@ with pkgs;
 
   gtk3 = callPackage ../development/libraries/gtk+/3.x.nix { };
 
+  gtk3-typeahead = callPackage ../development/libraries/gtk+/3.x-typeahead.nix { };
+
   gtkmm2 = callPackage ../development/libraries/gtkmm/2.x.nix { };
   gtkmm3 = callPackage ../development/libraries/gtkmm/3.x.nix { };
 

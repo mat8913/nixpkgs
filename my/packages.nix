@@ -12,7 +12,7 @@ with pkgs;
   feh
   ffmpeg_3_2
   file
-  firefox-esr-60
+  my.overrides.typeahead.firefox-esr-60
   gimp
   git
   gitAndTools.git-annex

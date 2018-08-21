@@ -9,4 +9,5 @@ makeOverride = packageOverrides: nixpkgs {
 in
 
 {
+  typeahead = makeOverride (import ./typeahead.nix);
 }

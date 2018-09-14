@@ -30,6 +30,7 @@ with pkgs;
   pavucontrol
   powerline-fonts
   redshift
+  shared-mime-info
   steam
   steam-run
   sudo

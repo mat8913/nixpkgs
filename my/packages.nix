@@ -18,6 +18,8 @@ buildEnv {
     unison
     weechat
     youtube-dl
+    gitAndTools.git-annex-remote-rclone
+    rclone
 
     haskellPackages.myanimelist-export
     haskellPackages.passman-cli

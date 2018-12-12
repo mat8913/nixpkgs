@@ -57,10 +57,10 @@ in rec {
   proton = fetchFromGitHub {
     # https://github.com/ValveSoftware/wine
     version = "proton_3.16";
-    sha256 = "1pyyj6q9ndapj5ajypn4kh4jz8jwjydismq60ww155c570b995wi";
+    sha256 = "01mbmkv6w3l7q8fb8v5796m8knjvx45viw1s9pw2yqvpazny9qja";
     owner = "ValveSoftware";
     repo = "wine";
-    rev = "174d487bf8ef5bec22c3663f50a276ae59d0a931";
+    rev = "0d666718091ff54b2304908e71ce0967465fb801";
     inherit (stable) mono gecko32 gecko64;
   };
 

@@ -54,6 +54,16 @@ in rec {
     rev = "v${version}";
   };
 
+  proton = fetchFromGitHub {
+    # https://github.com/ValveSoftware/wine
+    version = "proton_3.16";
+    sha256 = "1pyyj6q9ndapj5ajypn4kh4jz8jwjydismq60ww155c570b995wi";
+    owner = "ValveSoftware";
+    repo = "wine";
+    rev = "174d487bf8ef5bec22c3663f50a276ae59d0a931";
+    inherit (stable) mono gecko32 gecko64;
+  };
+
   winetricks = fetchFromGitHub rec {
     # https://github.com/Winetricks/winetricks/releases
     version = "20180815";

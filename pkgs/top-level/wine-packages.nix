@@ -48,4 +48,5 @@ rec {
   stable = base.override { wineRelease = "stable"; };
   unstable = base.override { wineRelease = "unstable"; };
   staging = base.override { wineRelease = "staging"; };
+  proton = full.override { wineRelease = "proton"; };
 }

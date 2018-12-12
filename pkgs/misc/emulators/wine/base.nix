@@ -1,9 +1,11 @@
-{ stdenv, lib, pkgArches,
+{ ccacheStdenv, lib, pkgArches,
   name, version, src, monos, geckos, platforms,
   pkgconfig, fontforge, makeWrapper, flex, bison,
   supportFlags,
   buildScript ? null, configureFlags ? []
 }:
+
+let stdenv = ccacheStdenv; in
 
 with import ./util.nix { inherit lib; };
 

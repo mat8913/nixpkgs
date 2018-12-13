@@ -61,7 +61,7 @@ stdenv.mkDerivation ((lib.optionalAttrs (! isNull buildScript) {
   ++ lib.optionals stdenv.isLinux  (with pkgs.xorg; [
      libXi libXcursor libXrandr libXrender libXxf86vm libXcomposite libXext
   ])
-  ++ [ pkgs.xorg.libX11 pkgs.SDL2 ]));
+  ++ [ pkgs.xorg.libX11 pkgs.SDL2 pkgs.faudio ]));
 
   # Wine locates a lot of libraries dynamically through dlopen().  Add
   # them to the RPATH so that the user doesn't have to set them in

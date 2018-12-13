@@ -8592,6 +8592,8 @@ in
 
   ezquake = callPackage ../games/ezquake { };
 
+  faudio = callPackage ../development/libraries/FAudio { };
+
   findbugs = callPackage ../development/tools/analysis/findbugs { };
 
   flootty = callPackage ../development/tools/flootty { };

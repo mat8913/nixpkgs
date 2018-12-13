@@ -14,6 +14,11 @@ stdenv.mkDerivation rec {
 
   buildInputs = [ SDL2 cmake ffmpeg ];
 
+  postInstall = ''
+    mkdir -p $out/lib/pkgconfig
+    substitute ${./faudio.pc.in} $out/lib/pkgconfig/faudio.pc --replace @prefix@ $out
+  '';
+
   meta = with stdenv.lib; {
     description = "Accuracy-focused XAudio reimplementation for open platforms";
     homepage = https://github.com/FNA-XNA/FAudio;

@@ -1,0 +1,11 @@
+prefix=@prefix@
+libdir=${prefix}/lib
+includedir=${prefix}/include
+
+Name: faudio
+Description: Accuracy-focused XAudio reimplementation for open platforms.
+Version: 0
+Requires: sdl2
+Conflicts:
+Libs: -L${libdir} -Wl,-rpath,${libdir} -lFAudio
+Cflags: -I${includedir}

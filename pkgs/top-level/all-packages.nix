@@ -6316,6 +6316,29 @@ with pkgs;
 
   abcl = callPackage ../development/compilers/abcl {};
 
+  adoptopenjdk-bin-11-packages-linux = import ../development/compilers/adoptopenjdk-bin/jdk11-linux.nix;
+  adoptopenjdk-bin-11-packages-darwin = import ../development/compilers/adoptopenjdk-bin/jdk11-darwin.nix;
+
+  adoptopenjdk-hotspot-bin-11 = if stdenv.isLinux
+    then callPackage adoptopenjdk-bin-11-packages-linux.jdk-hotspot {}
+    else callPackage adoptopenjdk-bin-11-packages-darwin.jdk-hotspot {};
+  adoptopenjdk-jre-hotspot-bin-11 = if stdenv.isLinux
+    then callPackage adoptopenjdk-bin-11-packages-linux.jre-hotspot {}
+    else callPackage adoptopenjdk-bin-11-packages-darwin.jre-hotspot {};
+
+  adoptopenjdk-openj9-bin-11 = if stdenv.isLinux
+    then callPackage adoptopenjdk-bin-11-packages-linux.jdk-openj9 {}
+    else callPackage adoptopenjdk-bin-11-packages-darwin.jdk-openj9 {};
+
+  # openj9 jre builds for mac are currently missing (upstream)
+  #adoptopenjdk-jre-openj9-bin-11 = if stdenv.isLinux
+  #  then callPackage adoptopenjdk-bin-11-packages-linux.jre-openj9 {}
+  #  else callPackage adoptopenjdk-bin-11-packages-darwin.jre-openj9 {};
+  adoptopenjdk-jre-openj9-bin-11 = callPackage adoptopenjdk-bin-11-packages-linux.jre-openj9 {};
+
+  adoptopenjdk-bin = adoptopenjdk-hotspot-bin-11;
+  adoptopenjdk-jre-bin = adoptopenjdk-jre-hotspot-bin-11;
+
   aldor = callPackage ../development/compilers/aldor { };
 
   aliceml = callPackage ../development/compilers/aliceml { };
@@ -6891,7 +6914,7 @@ with pkgs;
           ((openjdk10.override { minimal = true; }).jre // { outputs = [ "jre" ]; }));
 
   jdk = jdk8;
-  jre = jre8;
+  jre = if stdenv.isAarch32 || stdenv.isAarch64 then adoptopenjdk-jre-bin else jre8;
   jre_headless = jre8_headless;
 
   inherit (callPackages ../development/compilers/graalvm { }) mx jvmci8 graalvm8;
@@ -15744,13 +15767,19 @@ with pkgs;
 
   browsh = callPackage ../applications/networking/browsers/browsh { };
 
-  chromium = callPackage ../applications/networking/browsers/chromium {
+  chromium = callPackage ../applications/networking/browsers/chromium ({
     channel = "stable";
     pulseSupport = config.pulseaudio or true;
     enablePepperFlash = config.chromium.enablePepperFlash or false;
     enableWideVine = config.chromium.enableWideVine or false;
     gnome = gnome2;
-  };
+  } // (if stdenv.isAarch64 then {
+          stdenv = gcc8Stdenv;
+        } else {
+          llvmPackages = llvmPackages_7;
+          stdenv = llvmPackages_7.stdenv;
+        })
+   );
 
   chronos = callPackage ../applications/networking/cluster/chronos { };
 
@@ -20097,7 +20126,9 @@ with pkgs;
 
   openrw = callPackage ../games/openrw { };
 
-  openspades = callPackage ../games/openspades { };
+  openspades = callPackage ../games/openspades {
+    inherit (darwin.apple_sdk.frameworks) Cocoa;
+  };
 
   openttd = callPackage ../games/openttd {
     zlib = zlibStatic;

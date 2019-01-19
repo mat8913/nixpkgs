@@ -176,34 +176,39 @@ in package-set { inherit pkgs stdenv callPackage; } self // {
     callHackage = name: version: callPackageKeepDeriver (self.hackage2nix name version);
 
     # Creates a Haskell package from a source package by calling cabal2nix on the source.
-    callCabal2nix = name: src: args: let
-      filter = path: type:
-                 pkgs.lib.hasSuffix "${name}.cabal" path ||
-                 baseNameOf path == "package.yaml";
-      expr = self.haskellSrc2nix {
-        inherit name;
-        src = if pkgs.lib.canCleanSource src
-                then pkgs.lib.cleanSourceWith { inherit src filter; }
-              else src;
-      };
-    in overrideCabal (callPackageKeepDeriver expr args) (orig: {
-         inherit src;
-       });
+    callCabal2nixWithOptions = name: src: extraCabal2nixOptions: args:
+      let
+        filter = path: type:
+                   pkgs.lib.hasSuffix "${name}.cabal" path ||
+                   baseNameOf path == "package.yaml";
+        expr = self.haskellSrc2nix {
+          inherit name extraCabal2nixOptions;
+          src = if pkgs.lib.canCleanSource src
+                  then pkgs.lib.cleanSourceWith { inherit src filter; }
+                else src;
+        };
+      in overrideCabal (callPackageKeepDeriver expr args) (orig: {
+           inherit src;
+         });
+
+    callCabal2nix = name: src: args: self.callCabal2nixWithOptions name src "" args;
 
     # : { root : Path
+    #   , name : Defaulted String
     #   , source-overrides : Defaulted (Either Path VersionNumber)
     #   , overrides : Defaulted (HaskellPackageOverrideSet)
     #   , modifier : Defaulted
     #   , returnShellEnv : Defaulted
     #   } -> NixShellAwareDerivation
-    # Given a path to a haskell package directory whose cabal file is
-    # named the same as the directory name, an optional set of
-    # source overrides as appropriate for the 'packageSourceOverrides'
-    # function, an optional set of arbitrary overrides, and an optional
-    # haskell package modifier,  return a derivation appropriate
-    # for nix-build or nix-shell to build that package.
+    # Given a path to a haskell package directory, an optional package name
+    # which defaults to the base name of the path, an optional set of source
+    # overrides as appropriate for the 'packageSourceOverrides' function, an
+    # optional set of arbitrary overrides, and an optional haskell package
+    # modifier, return a derivation appropriate for nix-build or nix-shell to
+    # build that package.
     developPackage =
       { root
+      , name ? builtins.baseNameOf root
       , source-overrides ? {}
       , overrides ? self: super: {}
       , modifier ? drv: drv
@@ -213,7 +218,7 @@ in package-set { inherit pkgs stdenv callPackage; } self // {
            (pkgs.lib.composeExtensions
               (self.packageSourceOverrides source-overrides)
               overrides))
-        .callCabal2nix (builtins.baseNameOf root) root {};
+        .callCabal2nix name root {};
       in if returnShellEnv then (modifier drv).env else modifier drv;
 
     ghcWithPackages = selectFrom: withPackages (selectFrom self);

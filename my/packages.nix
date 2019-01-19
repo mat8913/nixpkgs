@@ -1,28 +1,24 @@
 pkgs:
 
 with pkgs;
+with import ../nixos { configuration = {}; };
+with config.system.build;
 
 buildEnv {
   name = "my-packages";
   paths = [
-    chromium
     ffmpeg_3_2
-    firefox-esr-60
-    gitAndTools.git-annex
-    gitAndTools.gitRemoteGcrypt
-    gnupg
     mkvtoolnix
-    mpv
-    powerline-fonts
-    taskwarrior
-    unison
-    weechat
     youtube-dl
     gitAndTools.git-annex-remote-rclone
     rclone
 
     haskellPackages.myanimelist-export
     haskellPackages.passman-cli
+
+    nix
+    nixos-rebuild
+    manual.manpages
   ];
   extraOutputsToInstall = [ "man" "doc" ];
 }

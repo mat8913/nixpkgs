@@ -7994,6 +7994,8 @@ with pkgs;
 
   electron = callPackage ../development/tools/electron { };
 
+  electron_3 = callPackage ../development/tools/electron/3.x.nix { };
+
   autobuild = callPackage ../development/tools/misc/autobuild { };
 
   autoconf = callPackage ../development/tools/misc/autoconf { };
@@ -14114,6 +14116,7 @@ with pkgs;
         # when adding a new linux version
         # kernelPatches.cpu-cgroup-v2."4.11"
         kernelPatches.modinst_arg_list_too_long
+        kernelPatches.raspberry_pi_wifi_fix
       ];
   };
 
@@ -17235,9 +17238,9 @@ with pkgs;
 
   inherit (kdeApplications)
     akonadi akregator ark dolphin dragon ffmpegthumbs filelight gwenview k3b
-    kaddressbook kate kcachegrind kcalc kcolorchooser kcontacts kdenlive kdf kdialog keditbookmarks
-    kget kgpg khelpcenter kig kleopatra kmail kmix kolourpaint kompare konsole kpkpass kitinerary
-    kontact korganizer krdc krfb ksystemlog kwalletmanager marble minuet okular spectacle;
+    kaddressbook kate kcachegrind kcalc kcharselect kcolorchooser kcontacts kdenlive kdf kdialog
+    keditbookmarks kget kgpg khelpcenter kig kleopatra kmail kmix kolourpaint kompare konsole
+    kpkpass kitinerary kontact korganizer krdc krfb ksystemlog kwalletmanager marble minuet okular spectacle;
 
   okteta = libsForQt5.callPackage ../applications/editors/okteta { };
 

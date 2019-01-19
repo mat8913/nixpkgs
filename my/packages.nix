@@ -20,6 +20,7 @@ buildEnv {
     youtube-dl
     gitAndTools.git-annex-remote-rclone
     rclone
+    (pass.withExtensions (exts: [exts.pass-otp]))
 
     haskellPackages.myanimelist-export
     haskellPackages.passman-cli

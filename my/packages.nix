@@ -5,7 +5,6 @@ with pkgs;
 buildEnv {
   name = "my-packages";
   paths = [
-    chromium
     ffmpeg_3_2
     firefox-esr-60
     gitAndTools.git-annex

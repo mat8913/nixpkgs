@@ -9890,6 +9890,8 @@ in
 
   funambol = callPackage ../development/libraries/funambol { };
 
+  gl2ps = callPackage ../development/libraries/gl2ps { };
+
   gamin = callPackage ../development/libraries/gamin { };
   fam = gamin; # added 2018-04-25
 

@@ -5924,6 +5924,8 @@ in
 
   ttylog = callPackage ../tools/misc/ttylog { };
 
+  tubeup = with python3Packages; toPythonApplication (callPackage ../tools/misc/tubeup {});
+
   turses = callPackage ../applications/networking/instant-messengers/turses { };
 
   oysttyer = callPackage ../applications/networking/instant-messengers/oysttyer { };

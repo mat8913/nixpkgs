@@ -1,6 +1,6 @@
 { lib, fetchurl, buildPythonPackage
 , zip, ffmpeg_3_2, rtmpdump, phantomjs2, atomicparsley, pycryptodome, pandoc
-, fetchpatch
+, fetchpatch, twitch-chatlog
 # Pandoc is required to build the package's man page. Release tarballs contain a
 # formatted man page already, though, it will still be installed. We keep the
 # manpage argument in place in case someone wants to use this derivation to
@@ -26,6 +26,8 @@ buildPythonPackage rec {
     sha256 = "0bxk6adyppdv50jnp5cika8wc6wfgd6d8zbg1njgmcs1pxskllmf";
   };
 
+  patches = [ ./twitch-chat.patch ];
+
   nativeBuildInputs = [ makeWrapper ];
   buildInputs = [ zip ] ++ lib.optional generateManPage pandoc;
   propagatedBuildInputs = lib.optional hlsEncryptedSupport pycryptodome;
@@ -36,7 +38,7 @@ buildPythonPackage rec {
   # - atomicparsley: embedding thumbnails
   makeWrapperArgs = let
       packagesToBinPath =
-        [ atomicparsley ]
+        [ atomicparsley twitch-chatlog ]
         ++ lib.optional ffmpegSupport ffmpeg_3_2
         ++ lib.optional rtmpSupport rtmpdump
         ++ lib.optional phantomjsSupport phantomjs2;

@@ -5932,6 +5932,8 @@ in
     libX11 = xorg.libX11;
   };
 
+  twitch-chatlog = (callPackage ../tools/misc/twitch-chatlog {}).twitch-chatlog;
+
   twitterBootstrap3 = callPackage ../development/web/twitter-bootstrap {};
   twitterBootstrap = twitterBootstrap3;
 

@@ -2,9 +2,12 @@
 
 # build-tools
 , bootPkgs
-, autoconf, automake, coreutils, fetchurl, fetchpatch, perl, python3, m4
+, autoconf, automake, coreutils, fetchurl, fetchpatch, perl, python3, m4, sphinx
 
 , libiconv ? null, ncurses
+
+, # GHC can be built with system libffi or a bundled one.
+  libffi ? null
 
 , useLLVM ? !stdenv.targetPlatform.isx86 || (stdenv.targetPlatform.isMusl && stdenv.hostPlatform != stdenv.targetPlatform)
 , # LLVM is conceptually a run-time-only depedendency, but for
@@ -29,10 +32,6 @@
 , # What flavour to build. An empty string indicates no
   # specific flavour and falls back to ghc default values.
   ghcFlavour ? stdenv.lib.optionalString (stdenv.targetPlatform != stdenv.hostPlatform) "perf-cross"
-, # Whether to backport https://phabricator.haskell.org/D4388 for
-  # deterministic profiling symbol names, at the cost of a slightly
-  # non-standard GHC API
-  deterministicProfiling ? false
 }:
 
 assert !enableIntegerSimple -> gmp != null;
@@ -69,6 +68,7 @@ let
 
   # Splicer will pull out correct variations
   libDeps = platform: stdenv.lib.optional enableTerminfo [ ncurses ]
+    ++ [libffi]
     ++ stdenv.lib.optional (!enableIntegerSimple) gmp
     ++ stdenv.lib.optional (platform.libc != "glibc" && !targetPlatform.isWindows) libiconv;
 
@@ -82,34 +82,23 @@ let
 
 in
 stdenv.mkDerivation (rec {
-  version = "8.4.3";
+  version = "8.6.4";
   name = "${targetPrefix}ghc-${version}";
 
   src = fetchurl {
     url = "https://downloads.haskell.org/~ghc/${version}/ghc-${version}-src.tar.xz";
-    sha256 = "1mk046vb561j75saz05rghhbkps46ym5aci4264dwc2qk3dayixf";
+    sha256 = "0fihs1sr0hpk67dn9cmrsav13kkcp9hz8ggdqcrs80rj8vj0fpav";
   };
 
   enableParallelBuilding = true;
 
   outputs = [ "out" "doc" ];
 
-  patches = [(fetchpatch {
-    url = "https://git.haskell.org/hsc2hs.git/patch/738f3666c878ee9e79c3d5e819ef8b3460288edf";
-    sha256 = "0plzsbfaq6vb1023lsarrjglwgr9chld4q3m99rcfzx0yx5mibp3";
-    extraPrefix = "utils/hsc2hs/";
-    stripLen = 1;
-  }) (fetchpatch rec { # https://phabricator.haskell.org/D5123
+  patches = [(fetchpatch rec { # https://phabricator.haskell.org/D5123
     url = "http://tarballs.nixos.org/sha256/${sha256}";
     name = "D5123.diff";
     sha256 = "0nhqwdamf2y4gbwqxcgjxs0kqx23w9gv5kj0zv6450dq19rji82n";
-  })] ++ stdenv.lib.optional deterministicProfiling
-    (fetchpatch rec {
-      url = "http://tarballs.nixos.org/sha256/${sha256}";
-      name = "D4388.diff";
-      sha256 = "0w6sdcvnqjlnlzpvnzw20b80v150ijjyjvs9548ildc1928j0w7s";
-    })
-    ++ stdenv.lib.optional stdenv.isDarwin ./backport-dylib-command-size-limit.patch;
+  })];
 
   postPatch = "patchShebangs .";
 
@@ -164,6 +153,7 @@ stdenv.mkDerivation (rec {
   configureFlags = [
     "--datadir=$doc/share/doc/ghc"
     "--with-curses-includes=${ncurses.dev}/include" "--with-curses-libraries=${ncurses.out}/lib"
+  ] ++ stdenv.lib.optionals (libffi != null) ["--with-system-libffi" "--with-ffi-includes=${libffi.dev}/include" "--with-ffi-libraries=${libffi.out}/lib"
   ] ++ stdenv.lib.optional (targetPlatform == hostPlatform && !enableIntegerSimple) [
     "--with-gmp-includes=${targetPackages.gmp.dev}/include" "--with-gmp-libraries=${targetPackages.gmp.out}/lib"
   ] ++ stdenv.lib.optional (targetPlatform == hostPlatform && hostPlatform.libc != "glibc" && !targetPlatform.isWindows) [
@@ -183,17 +173,17 @@ stdenv.mkDerivation (rec {
   strictDeps = true;
 
   # Don’t add -liconv to LDFLAGS automatically so that GHC will add it itself.
-  dontAddExtraLibs = true;
+	dontAddExtraLibs = true;
 
   nativeBuildInputs = [
-    perl autoconf automake m4 python3
+    perl autoconf automake m4 python3 sphinx
     ghc bootPkgs.alex bootPkgs.happy bootPkgs.hscolour
   ];
 
   # For building runtime libs
   depsBuildTarget = toolsForTarget;
 
-  buildInputs = libDeps hostPlatform;
+  buildInputs = [ perl ] ++ (libDeps hostPlatform);
 
   propagatedBuildInputs = [ targetPackages.stdenv.cc ]
     ++ stdenv.lib.optional useLLVM llvmPackages.llvm;
@@ -207,14 +197,9 @@ stdenv.mkDerivation (rec {
 
   checkTarget = "test";
 
-  hardeningDisable = [ "format" ];
+  hardeningDisable = [ "format" ] ++ stdenv.lib.optional stdenv.targetPlatform.isMusl "pie";
 
   postInstall = ''
-    for bin in "$out"/lib/${name}/bin/*; do
-      isELF "$bin" || continue
-      paxmark m "$bin"
-    done
-
     # Install the bash completion file.
     install -D -m 444 utils/completion/ghc.bash $out/share/bash-completion/completions/${targetPrefix}ghc
 
@@ -233,7 +218,7 @@ stdenv.mkDerivation (rec {
     inherit enableShared;
 
     # Our Cabal compiler name
-    haskellCompilerName = "ghc-8.4.3";
+    haskellCompilerName = "ghc-8.6.4";
   };
 
   meta = {

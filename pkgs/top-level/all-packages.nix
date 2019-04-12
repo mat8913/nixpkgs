@@ -960,6 +960,8 @@ in
 
   bluemix-cli = callPackage ../tools/admin/bluemix-cli { };
 
+  blur-effect = callPackage ../tools/graphics/blur-effect { };
+
   charles = charles4;
   inherit (callPackage ../applications/networking/charles {})
     charles3
@@ -2506,6 +2508,18 @@ in
     callPackage ../servers/search/elasticsearch/plugins.nix { }
   );
 
+  elasticsearch-curator = with (python3.override {
+    packageOverrides = self: super: {
+      click = super.click.overridePythonAttrs (oldAttrs: rec {
+        version = "6.7";
+        src = oldAttrs.src.override {
+          inherit version;
+          sha256 = "f15516df478d5a56180fbf80e68f206010e6d160fc39fa508b65e035fd75130b";
+        };
+      });
+    };
+  }).pkgs; toPythonApplication elasticsearch-curator;
+
   embree2 = callPackage ../development/libraries/embree/2.x.nix { };
 
   emem = callPackage ../applications/misc/emem { };
@@ -3891,10 +3905,7 @@ in
 
   nodejs = hiPrio nodejs-8_x;
 
-  nodejs-slim = nodejs-slim-6_x;
-
-  nodejs-6_x = callPackage ../development/web/nodejs/v6.nix {};
-  nodejs-slim-6_x = callPackage ../development/web/nodejs/v6.nix { enableNpm = false; };
+  nodejs-slim = nodejs-slim-8_x;
 
   nodejs-8_x = callPackage ../development/web/nodejs/v8.nix {};
   nodejs-slim-8_x = callPackage ../development/web/nodejs/v8.nix { enableNpm = false; };
@@ -3920,10 +3931,6 @@ in
 
   nodePackages_8_x = dontRecurseIntoAttrs (callPackage ../development/node-packages/default-v8.nix {
     nodejs = pkgs.nodejs-8_x;
-  });
-
-  nodePackages_6_x = dontRecurseIntoAttrs (callPackage ../development/node-packages/default-v6.nix {
-    nodejs = pkgs.nodejs-6_x;
   });
 
   nodePackages = nodePackages_10_x;
@@ -5004,6 +5011,8 @@ in
   proot = callPackage ../tools/system/proot { };
 
   prototypejs = callPackage ../development/libraries/prototypejs { };
+
+  proxmark3 = callPackage ../tools/security/proxmark3 { };
 
   proxychains = callPackage ../tools/networking/proxychains { };
 
@@ -6386,6 +6395,8 @@ in
 
   xclip = callPackage ../tools/misc/xclip { };
 
+  xcur2png = callPackage ../tools/graphics/xcur2png { };
+
   xcwd = callPackage ../tools/X11/xcwd { };
 
   xtitle = callPackage ../tools/misc/xtitle { };
@@ -7137,6 +7148,10 @@ in
   };
 
   go_1_11 = callPackage ../development/compilers/go/1.11.nix {
+    inherit (darwin.apple_sdk.frameworks) Security Foundation;
+  };
+
+  go_1_12 = callPackage ../development/compilers/go/1.12.nix {
     inherit (darwin.apple_sdk.frameworks) Security Foundation;
   };
 
@@ -9490,11 +9505,7 @@ in
 
   c-blosc = callPackage ../development/libraries/c-blosc { };
 
-  cachix = (callPackage ../development/tools/cachix { }).overrideAttrs (drv: {
-    meta = drv.meta // {
-      hydraPlatforms = stdenv.lib.platforms.unix;
-    };
-  });
+  cachix = callPackage ../development/tools/cachix { };
 
   capnproto = callPackage ../development/libraries/capnproto { };
 
@@ -16384,6 +16395,7 @@ in
   calligra = libsForQt5.callPackage ../applications/office/calligra {
     inherit (kdeApplications) akonadi-calendar akonadi-contacts;
     openjpeg = openjpeg_1;
+    poppler = poppler_0_61;
   };
 
   perkeep = callPackage ../applications/misc/perkeep { };
@@ -20907,7 +20919,9 @@ in
 
   pacvim = callPackage ../games/pacvim { };
 
-  performous = callPackage ../games/performous { };
+  performous = callPackage ../games/performous {
+    boost = boost166;
+  };
 
   pingus = callPackage ../games/pingus {};
 

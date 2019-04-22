@@ -6,7 +6,6 @@ buildEnv {
   name = "my-packages";
   paths = [
     ffmpeg_3_2
-    firefox-esr-60
     gitAndTools.git-annex
     gitAndTools.gitRemoteGcrypt
     gnupg
